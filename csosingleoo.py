@@ -81,62 +81,7 @@ def prepdata():
             #print(stopdata)
             f1.write(stopdata)
             f1.close()
-            doc2.close()
-            file1 = open("D:/Dipanwita docs/cat swarm/DUC2001_Summarization_Documents/DUC2001_Summarization_Documents/data/test/docs/d04a/prep1.txt")
-            appendFile = open("D:/Dipanwita docs/cat swarm/DUC2001_Summarization_Documents/DUC2001_Summarization_Documents/data/test/docs/d04a/prep2.txt",'w')
-            for line in file1:
-                #print(line)
-                line = line.lower()
-                line = re.sub(r'\([^)]*\)', '', line)
-                line = re.sub('[^A-Za-z0-9\s]+', '', line)
-                words = line.split(" ")
-                m = len(words)
-                originallength.append(m)
-                stopdata = " "
-                for r in words:
-                    if not r in stop_words:
-                        if not r in mystopwords:
-                            stopdata = stopdata + " " + r
-
-                #print(stopdata)
-                appendFile.write(stopdata)
-
-            #print(originallength)
-            print("original length",len(originallength))
-            return originallength
-
-
-
-def prepfeature():
-    feat = open(        "D:/Dipanwita docs/cat swarm/DUC2001_Summarization_Documents/DUC2001_Summarization_Documents/data/test/docs/d04a/feature1.txt",         "w")
-    arr1 = []
-    for line2 in prep:
-        #print(line2)
-        arr1.append(line2)
-
-    headline = []
-    for line in head:
-        #print(line)
-        headline.append(line)
-
-    finallist = []
-    tfgram = 0
-    line_no = 1
-
-    def tfidfonegram(arr1, ngram):
-        vectorizer = CountVectorizer(ngram_range=(ngram, ngram))
-        X = vectorizer.fit_transform(arr1)
-        vectorizer = TfidfVectorizer(ngram_range=(ngram, ngram))  # You can still specify n-grams here.
-        X = vectorizer.fit_transform(arr1)
-        vectorizer = TfidfVectorizer(ngram_range=(ngram, ngram), norm=None)  # You can still specify n-grams here.
-        X = vectorizer.fit_transform(arr1)
-        # print(X.toarray())
-        xar = X.toarray()
-        #print(xar)
-
-        rows = len(xar)
-        cols = len(xar[0])
-        total = 0
+            
         wo = []
         for m in range(0, rows):
             rowtotal = 0
@@ -150,56 +95,14 @@ def prepfeature():
 
     # we used xx-1 as similarity returns 0 if 100% similar else returns 1 if disimilar
     def wmdsim(arr1, headline):
-        wo = []
-        for f2 in arr1:
-            for i in headline:
-                words = len(f2)
-
-                vocabulary = [w for w in set(f2.lower().split() + i.lower().split()) if
-                              w in model.wv.vocab ]
-
-                vect = CountVectorizer(vocabulary=vocabulary).fit([i, f2])
-                W_ = np.array([model[w] for w in vect.get_feature_names() if w in model])
-                D_ = euclidean_distances(W_)
-                D_ = D_.astype(np.double)
-                D_ /= D_.max()  # just for comparison purposes
-                v_1, v_2 = vect.transform([i, f2])
-                v_1 = v_1.toarray().ravel()
-                v_2 = v_2.toarray().ravel()
-                v_1 = v_1.astype(np.double)
-                v_2 = v_2.astype(np.double)
-                v_1 /= v_1.sum()
-                v_2 /= v_2.sum()
-                # print("cosine(doc_1, doc_2) = {:.2f}".format(cosine(v_1, v_2)))
-                xx = emd(v_1, v_2, D_)
-                xx = 1 - xx
+        
             wo.append(xx)
         # print(wo)
         return wo
 
 
     def cosinesim(arr1, headline):
-        wo = []
-        for f2 in arr1:
-            for i in headline:
-                words = len(f2)
-
-                vocabulary = [w for w in set(f2.lower().split() + i.lower().split()) if
-                              w in model.wv.vocab]
-
-                vect = CountVectorizer(vocabulary=vocabulary).fit([i, f2])
-                W_ = np.array([model[w] for w in vect.get_feature_names() if w in model])
-                D_ = euclidean_distances(W_)
-                D_ = D_.astype(np.double)
-                D_ /= D_.max()  # just for comparison purposes
-                v_1, v_2 = vect.transform([i, f2])
-                v_1 = v_1.toarray().ravel()
-                v_2 = v_2.toarray().ravel()
-                # print("cosine(doc_1, doc_2) = {:.2f}".format(cosine(v_1, v_2)))
-                xx = cosine(v_1, v_2)
-                xx = 1 - xx
-            wo.append(xx)
-        # print(wo)
+      
         return wo
 
     output = []
